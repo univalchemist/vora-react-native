@@ -1,0 +1,32 @@
+const images = {
+    logo_anthem_1: require('./logos/Anthem_1.jpeg'),
+    new_logo: require('./logos/Logo-Anthem.png'),
+    logo_login: require('./logos/Logo-Anthem-Login.png'),
+    icon_back_arrow: require('./icons/back-arrow.png'),
+    face_id_icon: require('./icons/face-id.png'),
+    touch_id_icon: require('./icons/touch-id.png'),
+    finger_icon: require('./icons/finger-icon.png'),
+    face_icon: require('./icons/face-icon.png'),
+    warning_icon: require('./icons/warning.png'),
+    sub_dot: require('./icons/sub-dot.png'),
+    bg_login: require('./images/bg_login.png'),
+    bg_alert_login: require('./images/bg_alert_login.png'),
+    user_left_icon: require('./icons/user-left-icon.png'),
+    lock_left_icon: require('./icons/lock-left-icon.png'),
+    user_left_icon_error: require('./icons/user-left-icon-error.png'),
+    lock_left_icon_error: require('./icons/lock-left-icon-error.png'),
+    nav_home: require('./icons/Home-ic.png'),
+    nav_home_active: require('./icons/HomeActive-ic.png'),
+    nav_notification: require('./icons/Activity-ic.png'),
+    nav_notification_active: require('./icons/ActivityActive-ic.png'),
+    nav_news: require('./icons/News-ic.png'),
+    nav_news_active: require('./icons/NewsActive-ic.png'),
+
+    message_header_bg: require('./images/headerImage.png'),
+    logo_anthem_white: require('./logos/Logo-Anthem-White.png'),
+    message_profile_img: require('./images/profile.png'),
+    applicationItemIcon: require('./images/applicationItemIcon.png'),
+    menuVerticalDot: require('./icons/icon-menu-vertical-dot.png'),
+    applicationImage: require('./images/applicationsImage.png')
+}
+export default images;
