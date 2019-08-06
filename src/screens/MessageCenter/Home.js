@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Image, ImageBackground, View, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, FlatList } from 'react-native';
 import { connect } from 'react-redux'
-
+import ApolloClient from 'apollo-boost';
+import { APPS_BASE_URL } from 'react-native-dotenv'
 import BackgroundTimer from '../../utils/timer';
 import * as Progress from 'react-native-progress';
 import { updateProgressFlag } from '../../utils/redux/actions/action';
@@ -13,7 +14,10 @@ import ApplicationStatus from './components/ApplicationStatus';
 import ApplicationFeed from './components/ApplicationFeed';
 import {testGetApplication} from "../../utils/apis/application";
 import images from "../../assets";
+import { GET_APPLICATION_QUERY } from '../../utils/apollo/queries/application';
 
+const uri = `${APPS_BASE_URL}/apps/ptb/api/gql/applications/v1`;
+const client = new ApolloClient({uri: uri});
 class Home extends Component {
 
     //On Press Navigation
@@ -24,10 +28,11 @@ class Home extends Component {
 
     componentDidMount() {
         console.log('Applications didmount')
-        this.getApplications();
+        // this.getMedicareApps();
+        this.getApplications()
         //BackgroundTimer.startTimer(this.props.dispatch, this.props.navigation);
     }
-    getApplications = () => {
+     getApplications = () => {
         this.props.dispatch(updateProgressFlag(true));
 
         testGetApplication()
@@ -36,7 +41,7 @@ class Home extends Component {
                 console.log({ getApplications: res })
                 const response = res.data.data;
                 const data = response.getApplications.data;
-                this.setState({ data })
+                this.setState({ data, filteredData: data, filteredDataByOption: data })
             })
             .catch((error) => {
                 console.log({ profileError: error });
@@ -44,30 +49,40 @@ class Home extends Component {
             })
     }
 
-    /*getMedicareApps = async () => {
+    getMedicareApps = async () => {
+        const { auth } =this.props;
+        const { profile, username } = auth;
+        const encryptedTaxId = profile.producer.encryptedTaxId;
+        const userId = username
         this.props.dispatch(updateProgressFlag(true));
-        const body = {
-            "query": "query { getMedicareApps(medicareAppsInput: {userId:\"ehealthsit02\",encryptedTaxId:\"MLMPGQJPTY\",sortBy:\"status\",pageSize: 10,pageNumber:1,status: \"approved\"})}"
+        try {
+            let res = await client.query({ query: GET_APPLICATION_QUERY, fetchPolicy: 'network-only', variables: { userId, encryptedTaxId } });
+            this.props.dispatch(updateProgressFlag(false));
+            console.log({ getApplications: res })
+            const response = res.data;
+            const data = response.getApplications.data;
+            this.setState({ data, filteredData: data, filteredDataByOption: data })
+        } catch(error) {
+            console.log({ getApplications: error });
+            this.props.dispatch(updateProgressFlag(false));
         }
-        console.log("BODY:: " + body);
-        getMedicareApps(body)
-            .then((res) => {
-                this.props.dispatch(updateProgressFlag(false));
-                console.log({ getMedicareApps: res })
-                const response = res.data.data;
-                const data = response.getMedicareApps.data;
-                this.setState({ data })
-            })
-            .catch((error) => {
-                console.log({ profileError: error });
-                this.props.dispatch(updateProgressFlag(false));
-            })
-    }*/
+    }
     selectStatus = (num) => {
-      this.setState({ selectedStatus: num });
+      this.setState({
+          selectedStatus: num,
+          filteredData: this.filterDataByStatus(num)
+      });
     };
-    filterData = () => {
-        const{ data, selectedFilterOption } = this.state;
+    selectFilterOption = (num) => {
+        this.setState({
+            selectedFilterOption: num,
+            selectedStatus: -1,
+            filteredDataByOption: this.filterDataByFilterOption(num),
+            filteredData: this.filterDataByFilterOption(num)
+        });
+    };
+    filterDataByFilterOption = (selectedFilterOption) => {
+        const{ data } = this.state;
         switch (selectedFilterOption) {
             case 1:
                 return data.filter(d => d.marketSegment === "smallgroup");
@@ -77,16 +92,55 @@ class Home extends Component {
                 return data
         }
     };
+    filterDataByStatus = (selectedStatus) => {
+        const{ filteredDataByOption } = this.state;
+        switch (selectedStatus) {
+            case 0:
+                return filteredDataByOption.filter(d => d.status === "actionreq");
+            case 1:
+                return filteredDataByOption.filter(d => d.status === "submitted");
+            case 2:
+                return filteredDataByOption.filter(d => d.status === "inprogress");
+            case 3:
+                return filteredDataByOption.filter(d => d.status === "completed");
+            case 4:
+                return filteredDataByOption.filter(d => d.status === "statusx");
+            default:
+                return filteredDataByOption
+        }
+    };
+    renderNoResult = () => {
+        return (
+            <View style={styles.noResultContainer}>
+                <View>
+                    <Image source={images.noResultAll}/>
+                </View>
+                <View>
+                    <Text style={styles.noResultMessage1}>Nothing Here...</Text>
+                </View>
+                <View>
+                    <Text style={styles.noResultMessage2}>You don't have any applications yet.</Text>
+                </View>
+
+            </View>
+        );
+    };
+    onFocusSearch = () => {
+        console.log("onFocusSearch");
+        this.props.navigation.navigate("Search");
+    };
     constructor(props) {
         super(props);
         this.state = {
             data: [],
+            filteredDataByOption: [],
+            filteredData: [],
             selectedFilterOption: 0,
-            selectedStatus: 0
+            selectedStatus: -1
         }
     }
     render() {
-        const { data, selectedFilterOption, selectedStatus } = this.state;
+        const { filteredDataByOption, filteredData, selectedFilterOption, selectedStatus } = this.state;
         return (
             <View style={styles.wrap}>
                     <ParallaxScrollView
@@ -131,19 +185,19 @@ class Home extends Component {
                                 style={styles.backgroundStatusContainer}
                             >
                                 <TouchableOpacity
-                                    onPress={() => this.setState({selectedFilterOption: 0})}
+                                    onPress={() => this.selectFilterOption(0)}
                                     style={selectedFilterOption === 0? styles.filterTabLeftActive: styles.filterTabLeft}
                                 >
                                     <Text style={styles.filterOptionText}>All</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => this.setState({selectedFilterOption: 1})}
+                                    onPress={() => this.selectFilterOption(1)}
                                     style={selectedFilterOption === 1? styles.filterTabMiddleActive: styles.filterTabMiddle}
                                 >
                                     <Text style={styles.filterOptionText}>Small Groups</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    onPress={() => this.setState({selectedFilterOption: 2})}
+                                    onPress={() => this.selectFilterOption(2)}
                                     style={selectedFilterOption === 2? styles.filterTabRightActive: styles.filterTabRight}
                                 >
                                     <Text style={styles.filterOptionText}>Medicare</Text>
@@ -157,7 +211,7 @@ class Home extends Component {
                    <View 
                         style={styles.container}
                     >
-                    <ScrollView 
+                    <ScrollView
                         style={styles.container}
                     >
                         <View 
@@ -169,20 +223,25 @@ class Home extends Component {
                                 placeholderTextColor={'#999'}
                                 underlineColorAndroid={'#fff'}
                                 autoCorrect={false}
+                                onFocus={() => this.onFocusSearch()}
                             />
                         </View>
                         <Text style={styles.applicationText}>Application Status</Text>
                          <ApplicationStatus
-                             data={data}
+                             data={filteredDataByOption}
                              selectedStatus={selectedStatus}
                              selectStatus={this.selectStatus}
                          />
                         <View 
                             style={styles.feedWrap}
                         >
-                            <ApplicationFeed
-                                data={this.filterData()}
-                            />
+                            {filteredData.length === 0?
+                                this.renderNoResult()
+                                :
+                                <ApplicationFeed
+                                    data={filteredData}
+                                />
+                            }
                         </View>
                     </ScrollView>
                     </View>
@@ -192,7 +251,7 @@ class Home extends Component {
     }
 }
 const mapStateToProps = (state) => ({
-
+    auth: state.authReducer
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -242,21 +301,6 @@ const styles = StyleSheet.create({
         marginLeft: 43,
         fontSize: 15,
         color: '#999'
-    },
-    applicationStatusContainer: {
-        flexDirection: 'row',
-        marginTop: 5,
-       
-    },
-    pendingContainer:{
-        backgroundColor: "#fff",
-        width: 100,
-        height: 68,
-        borderRadius: 10,
-        marginLeft: 16,
-        shadowOffset:{  width: 0,  height: 1,  },
-        shadowColor: 'rgba(0,0,0,0.07)',
-        shadowOpacity: 14.0,
     },
     backgroundStatusContainer: {
         flexDirection: 'row',
@@ -329,19 +373,10 @@ const styles = StyleSheet.create({
         fontFamily: 'SourceSansPro-Regular',
         color: "white"
     },
-    statusContainer: {
-        flexDirection: 'column',
-        marginRight: 18,   
-    },
-    timelineContainer :{
-        //flex: 1,
-        alignItems: 'flex-end'
-
-    },
 
     feedWrap: {
-        //flex: 1,
-        marginTop: 10
+        flex: 1,
+        marginTop: 10,
     },
     statusText: {
         fontFamily: 'SourceSansPro-Regular',
@@ -353,42 +388,14 @@ const styles = StyleSheet.create({
         fontSize: 25,
         color: "#f9A21F",
         paddingLeft: 9,
-        paddingTop: 10    
-    }, 
+        paddingTop: 10
+    },
     inProgressNumberText: {
         fontFamily: 'SourceSansPro-Regular',
         fontSize: 25,
         color: "#8091EC",
         paddingLeft: 9,
-        paddingTop: 10    
-    }, 
-    approvedNumberText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 25,
-        color: "#75C77D",
-        paddingLeft: 9,
-        paddingTop: 10    
-    }, 
-    applicationStatusTitleText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 13,
-        color: "#000000",
-        paddingLeft: 9,
-        paddingBottom: 6
-    },
-    marketNumberText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 22,
-        color: "#FFF",
-        paddingLeft: 0,
-        paddingTop: 10    
-    }, 
-    marketTitleText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 13,
-        color: "#FFF",
-        paddingLeft: 0,
-        paddingBottom: 16
+        paddingTop: 10
     },
     applicationText: {
         fontFamily: 'SourceSansPro-Regular',
@@ -397,19 +404,6 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingLeft: 16,
         paddingBottom: 10
-
-    },
-    typeText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 15,
-        color: "#000"
-
-    },
-    identifierText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 13,
-        color: 'rgba(0,0,0,0.5)',
-        //paddingTop: 5
 
     },
     text: {
@@ -445,23 +439,25 @@ const styles = StyleSheet.create({
     search: {
         //marginRight: 23.76,
     },
-    statusButton: {
-        backgroundColor: "#f9A21f",
-        height: 20,
-        width: 71,
-        
-        borderRadius: 10,
+    noResultContainer: {
+        flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
-
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginTop: 25,
     },
-    statusButtonText: {
-        fontFamily: 'SourceSansPro-Regular',
-        fontSize: 15,
-        color: "#fff"
-
+    noResultMessage1: {
+        fontSize: 20,
+        fontWeight: '300',
+        fontFamily: 'Roboto-Regular'
     },
-
+    noResultMessage2: {
+        fontSize: 13,
+        marginTop: 5,
+        fontWeight: 'normal',
+        color: 'rgba(0, 0, 0, 0.5)',
+        fontFamily: 'Roboto-Regular'
+    }
   });
 
 export default connect(mapStateToProps)(Home)

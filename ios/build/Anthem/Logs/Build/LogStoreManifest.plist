@@ -5,6 +5,71 @@
 	<key>logFormatVersion</key>
 	<integer>10</integer>
 	<key>logs</key>
-	<dict/>
+	<dict>
+		<key>032F24CE-E78F-4A26-96BD-FFAE15473421</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>032F24CE-E78F-4A26-96BD-FFAE15473421.xcactivitylog</string>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>Anthem project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>Anthem</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project Anthem with scheme Anthem and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>586445696.74644601</real>
+			<key>timeStoppedRecording</key>
+			<real>586445702.04628897</real>
+			<key>title</key>
+			<string>Building project Anthem with scheme Anthem and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>032F24CE-E78F-4A26-96BD-FFAE15473421</string>
+		</dict>
+		<key>C45D5715-8259-4098-969E-6176B9D8B097</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>C45D5715-8259-4098-969E-6176B9D8B097.xcactivitylog</string>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>Anthem project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>Anthem</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building project Anthem with scheme Anthem and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>586793912.204476</real>
+			<key>timeStoppedRecording</key>
+			<real>586793913.65331495</real>
+			<key>title</key>
+			<string>Building project Anthem with scheme Anthem and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>C45D5715-8259-4098-969E-6176B9D8B097</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

@@ -27,6 +27,9 @@ const images = {
     message_profile_img: require('./images/profile.png'),
     applicationItemIcon: require('./images/applicationItemIcon.png'),
     menuVerticalDot: require('./icons/icon-menu-vertical-dot.png'),
-    applicationImage: require('./images/applicationsImage.png')
+    applicationImage: require('./images/applicationsImage.png'),
+    noResultAll: require('./images/no-result-all.png'),
+    noResultMedicare: require('./images/no-result-medicare.png'),
+    noResultSmall: require('./images/no-result-small.png'),
 }
 export default images;

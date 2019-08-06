@@ -42,6 +42,7 @@ const MessageTabNav = createBottomTabNavigator(
         tabBarOptions: {
             activeTintColor: '#0067A5',
             inactiveTintColor: '#D2D2D2',
+            removeClippedSubviews: true,
             //upperCaseLabel: false,
             safeAreaView: true,
             style: {

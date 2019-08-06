@@ -3,6 +3,8 @@ import { Image, ImageBackground, View, ScrollView, StyleSheet, Text, TouchableOp
 import { connect } from 'react-redux'
 import ViewMoreText from 'react-native-view-more-text';
 import _ from 'lodash';
+import ApolloClient from 'apollo-boost';
+import { MSGS_BASE_URL } from 'react-native-dotenv'
 // Styles
 import { GLOBAL_WRAP } from '../../styles'
 import { COLOR } from '../../styles/color';
@@ -10,7 +12,11 @@ import images from '../../assets';
 import { getMessages } from '../../utils/apis/message';
 import { updateProgressFlag } from '../../utils/redux/actions/action';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
+import { GET_MESSAGE_QUERY } from '../../utils/apollo/queries/message';
 
+
+const uri = `${MSGS_BASE_URL}/apps/ptb/api/gql/messages/v1`;
+const client = new ApolloClient({uri: uri});
 class News extends Component {
     constructor(props) {
         super(props)
@@ -36,21 +42,19 @@ class News extends Component {
         state = state.substring(0, state.length - 1);
         markets = markets.substring(0, markets.length - 1);
         this.props.dispatch(updateProgressFlag(true));
-        const body = {
-            "query": `query { getMessages(messagesInput:{ criteria: \"lineOfBusiness:state|${markets}:${state}\", messageType: \"General\" channel: \"mobile\" }){  messages{ title description } }}`
-        }
-        getMessages(body)
-            .then((res) => {
-                this.props.dispatch(updateProgressFlag(false));
+        const criteria = `lineOfBusiness:state|${markets}:${state}`
+        console.log(criteria)
+        try {
+            let res = await client.query({ query: GET_MESSAGE_QUERY, fetchPolicy: 'network-only', variables: { criteria } });
+            this.props.dispatch(updateProgressFlag(false));
                 console.log({ getMessages: res })
-                const response = res.data.data;
+                const response = res.data;
                 const messages = response.getMessages.messages;
                 this.setState({ messages })
-            })
-            .catch((error) => {
-                console.log({ getMessages: error });
-                this.props.dispatch(updateProgressFlag(false));
-            })
+        } catch(error) {
+            console.log({ getMessages: error });
+            this.props.dispatch(updateProgressFlag(false));
+        }
     }
     _renderTruncatedFooter = (handlePress) => {
         return (

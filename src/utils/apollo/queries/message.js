@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
-export const GET_MESSAGE_QUERY = gql`query getMessages {
-    getMessages(messagesInput: {criteria: "lineOfBusiness:state|SNR,IND:NY,KY", messageType: "General", channel: "mobile"}) {
+export const GET_MESSAGE_QUERY = gql`query getMessages($criteria: String!) {
+    getMessages(messagesInput: {criteria: $criteria, messageType: "General", channel: "mobile"}) {
         messages{ title description }
     }
 }`;

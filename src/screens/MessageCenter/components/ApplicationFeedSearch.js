@@ -1,8 +1,8 @@
 import React, {Component} from "react";
-import {ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View, Image} from 'react-native';
 import images from "../../../assets";
 
-export default class ApplicationFeed extends Component {
+export default class ApplicationFeedSearch extends Component {
     displayName = (name) => {
         const _array = name.split(" ");
         let _name = "";
@@ -46,7 +46,7 @@ export default class ApplicationFeed extends Component {
                                 <View style={styles.sectionTopBody}>
                                     <View style={{flex: 1, justifyContent: 'center'}}>
                                         <Text style={styles.appNameStyle}>
-                                            {this.displayName(app.name)}
+                                            {app.name?this.displayName(app.name):"No name"}
                                         </Text>
                                         <Text style={styles.appAcnStyle}>
                                             {"# " + app.acn}
@@ -59,35 +59,9 @@ export default class ApplicationFeed extends Component {
                                             </Text>
                                         </View>
                                         <Text style={styles.categoryStyle}>
-                                            {'Signature & Documents'}
+                                            {app.requestEffectiveDate}
                                         </Text>
                                     </View>
-                                </View>
-                            </View>
-                            <View style={styles.sectionBottom}>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 11 }}>
-                                        {'Effective Date'}
-                                    </Text>
-                                    <Text style={{ color: 'rgba(0, 0, 0, 0.9)', fontSize: 12, marginTop: 5 }}>
-                                        {app.requestEffectiveDate}
-                                    </Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 11 }}>
-                                        {'State'}
-                                    </Text>
-                                    <Text style={{ color: 'rgba(0, 0, 0, 0.9)', fontSize: 12, marginTop: 5 }}>
-                                        {app.state}
-                                    </Text>
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ color: 'rgba(0, 0, 0, 0.5)', fontSize: 11 }}>
-                                        {'Product(s)'}
-                                    </Text>
-                                    <Text style={{ color: 'rgba(0, 0, 0, 0.9)', fontSize: 12, marginTop: 5 }}>
-                                        {this.displayName(app.product)}
-                                    </Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -119,17 +93,8 @@ const styles = StyleSheet.create({
     sectionTop: {
         width: '100%',
         flexDirection: 'row',
-        borderBottomColor: '#F2F2F2',
-        borderBottomWidth: 1,
         paddingTop: 10,
         paddingBottom: 10,
-        paddingHorizontal: 20,
-    },
-    sectionBottom: {
-        width: '100%',
-        flexDirection: 'row',
-        paddingTop: 15,
-        paddingBottom: 15,
         paddingHorizontal: 20,
     },
     sectionTopBody: {
@@ -169,21 +134,5 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: '#FF5050',
         marginTop: 5
-    },
-    loadingWrap: {
-        backgroundColor: '#dadad9',
-        width: 300,
-        height: 250,
-        //flex: 1,
-        marginBottom: 10,
-        marginRight: 10,
-        marginLeft: 10,
-        paddingTop: 20,
-        paddingBottom: 20,
-        paddingHorizontal: 20,
-        borderRadius: 10,
-        shadowOffset: {width: 0, height: 1,},
-        shadowColor: 'rgba(0,0,0,0.07)',
-        shadowOpacity: 14.0,
-    },
+    }
 });

@@ -8,6 +8,7 @@ const initialState = {
     returnUrl: null,
     userDetails: {},
     profile: null,
+    username: '',
     actionTime: 0
 }
 
@@ -30,7 +31,8 @@ export const authReducer = (state = initialState, action) => {
                 token: action.payload.token,
                 userDetails: action.payload.user,
                 postStatus: POST_STATUS.POST_SUCCESS,
-                profile: action.payload.profile
+                profile: action.payload.profile,
+                username: action.payload.username
             }
 
         case ActionTypes.ACCOUNT_AUTH_FAIL:

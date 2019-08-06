@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { DEV_PROTECTED_URL, TEST_PROFILE_ENDPOINT } from 'react-native-dotenv'
+import { LOGIN_BASE_URL } from 'react-native-dotenv'
 export const getCookie = (form) => {
     return new Promise((resolve, reject) => {
-        return axios.post(`${DEV_PROTECTED_URL}/siteminderagent/forms/login.fcc`, form, {
+        return axios.post(`${LOGIN_BASE_URL}/siteminderagent/forms/login.fcc`, form, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
@@ -14,12 +14,10 @@ export const getCookie = (form) => {
             reject(error);
         })
     })
-};
-
-
+}
 export const testGetProfile = (body) => {
     return new Promise((resolve, reject) => {
-        return axios.post(TEST_PROFILE_ENDPOINT, body, {
+        return axios.post("http://demo4590125.mockable.io/apps/ptb/api/gql/profile/v1", body, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }

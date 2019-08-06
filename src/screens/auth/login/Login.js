@@ -28,7 +28,7 @@ const optionalConfigObject = {
   unifiedErrors: false, // use unified error messages (default false)
   passcodeFallback: true, // iOS - allows the device to fall back to using the passcode, if faceid/touch is not available. this does not mean that if touchid/faceid fails the first few times it will revert to passcode, rather that if the former are not enrolled, then it will use the passcode.
 };
-
+//ehealthsit02
 class Login extends Component {
   state = {
     flag: false,
@@ -116,18 +116,11 @@ class Login extends Component {
   _onLoginPress = () => {
     console.log('_onLoginPress')
     const { username, password, errorCount } = this.state;
-    /* if (username == "aaa" && password == "aaa") {
-      this.onShowAskTouchAuth();
-    } else {
-      this.setState({ formError: true, dialogVisible: true, errorDescription: "We couldn't complete your login.", errorCount: errorCount - 1 });
-    } */
+     // this.getCookie(username, password);
 
-
-
-    // this.getCookie(username, password);
     //test endpoint for profile
     this.testGetUserProfile();
-  };
+  }
   testGetUserProfile = async () => {
     const { errorCount } = this.state;
     this.props.dispatch(updateProgressFlag(true));
@@ -192,7 +185,7 @@ class Login extends Component {
       this.props.dispatch(updateProgressFlag(false));
       console.log({ profileResponse: res })
       this.setState({profile: res.data.getProfile.profile});
-      this.props.dispatch(updateProfile(res.data.getProfile.profile));
+      this.props.dispatch(updateProfile(res.data.getProfile.profile, username));
       this.onShowAskTouchAuth();
     } catch (e) {
       console.log({ profileError: e });
